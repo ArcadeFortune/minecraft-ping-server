@@ -1,5 +1,6 @@
 import { minecraftVerToProtocolVer } from "./util.ts";
 import { DT } from "./datatype.ts";
+import { ClientReader } from "./client-reader.ts";
 
 enum CLIENT_STATE {
   Status = 1,
@@ -27,25 +28,26 @@ export class Client {
 
   async handshake() {
     this.#ensureConn();
-    await this.conn.write(DT.encode([
-      DT.int(0),
-      DT.int(minecraftVerToProtocolVer(this.version)),
+    await this.conn.write(DT.packet([
+      DT.varInt(0),
+      DT.varInt(minecraftVerToProtocolVer(this.version)),
       DT.string(this.serverAddress),
       DT.ushort(this.serverPort),
-      DT.int(CLIENT_STATE.Status),
+      DT.varInt(CLIENT_STATE.Status),
     ]));
   }
 
-  async serverStatus() {
+  async askStatus() {
     this.#ensureConn();
-    await this.conn.write(DT.encode([
-      DT.int(0)
+    await this.conn.write(DT.packet([
+      DT.varInt(0)
     ]));
   }
 
   async read() {
     this.#ensureConn();
-    const buffer = new Uint8Array(4096);
+    const reader = new ClientReader();
+    const buffer = new Uint8Array(50);
     while (true) {
       const n = await this.conn.read(buffer);
 
@@ -53,8 +55,15 @@ export class Client {
         console.log("Server closed connection");
         break;
       }
-      const data = buffer.slice(0, n);
-      console.log("server:", data);
+      reader.push(buffer.slice(0, n));
+      while (true) {
+        const packet = reader.nextPacket();
+
+        if (!packet) break;
+
+        const json = reader.parsePacket(packet);
+        console.log('json --->', json);
+      }
     }
   }
 }

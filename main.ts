@@ -8,5 +8,5 @@ const client = new Client("26.2", target, port);
 
 await client.connect(target, port);
 await client.handshake();
-await client.serverStatus();
+await client.askStatus();
 await client.read();
