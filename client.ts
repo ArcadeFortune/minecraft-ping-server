@@ -1,6 +1,7 @@
 import { minecraftVerToProtocolVer } from "./util.ts";
 import { DT } from "./datatype.ts";
 import { ClientReader } from "./client-reader.ts";
+import { debug } from "node:console";
 
 enum CLIENT_STATE {
   Status = 1,
@@ -20,6 +21,7 @@ export class Client {
   }
 
   async connect(ip: string, port: number = 25565) {
+    debug(`Connecting to server ${ip} with port ${port}.`);
     this.conn = await Deno.connect({
       hostname: ip,
       port: port,
@@ -28,6 +30,7 @@ export class Client {
 
   async handshake() {
     this.#ensureConn();
+    debug(`Handshaking with version ${this.version}.`);
     await this.conn.write(DT.packet([
       DT.varInt(0),
       DT.varInt(minecraftVerToProtocolVer(this.version)),
@@ -39,30 +42,28 @@ export class Client {
 
   async askStatus() {
     this.#ensureConn();
+    debug("Asking for server status.");
     await this.conn.write(DT.packet([
       DT.varInt(0)
     ]));
   }
 
-  async read() {
+  async *read() {
     this.#ensureConn();
     const reader = new ClientReader();
     const buffer = new Uint8Array(50);
     while (true) {
-      const n = await this.conn.read(buffer);
-
-      if (n === null) {
-        console.log("Server closed connection");
-        break;
-      }
-      reader.push(buffer.slice(0, n));
+      const bytesRead = await this.conn.read(buffer);
+      if (bytesRead === null) return;
+      debug("Got new TCP packet.");
+      reader.push(buffer.slice(0, bytesRead));
       while (true) {
         const packet = reader.nextPacket();
-
         if (!packet) break;
-
+        debug("TCP packet finished.");
         const json = reader.parsePacket(packet);
-        console.log('json --->', json);
+        debug(json);
+        yield json;
       }
     }
   }
