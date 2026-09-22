@@ -7,7 +7,7 @@ export class DNS {
       return { target: match.groups.hostname, port: Number(match.groups.port) };
     }
     try {
-      const ips = await Deno.resolveDns("_minecraft._tcp." + name, "SRV");
+      const ips = await Deno.resolveDns("_minecraft._tcp." + name.replace(/^https?:\/\//i, ''), "SRV");
       return { target: ips[0].target, port: ips[0].port };
     } catch (_) {
       return { target: name, port: Util.DEFAULT_SERVER_PORT };
