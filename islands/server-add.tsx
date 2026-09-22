@@ -8,7 +8,7 @@ export default function ServerAdd({ onSubmit }: ServerAddProps) {
         e.preventDefault();
         const fd = new FormData(e.currentTarget);
         const address = fd.get("address")?.toString();
-        const name = fd.get("name")?.toString() || `Server ${Date.now()}`;
+        const name = fd.get("name")?.toString() || "";
         if (!address) throw new Error("Please provide an address");
         onSubmit(address, name);
       }}

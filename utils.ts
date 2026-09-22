@@ -7,3 +7,10 @@ export interface State {
 }
 
 export const define = createDefine<State>();
+
+export function respond(message: unknown, status: number, error: string | null = null, options: ResponseInit = {}) {
+  return new Response(JSON.stringify({ message, error }), {
+    status,
+    ...options,
+  });
+}

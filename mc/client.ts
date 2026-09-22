@@ -1,7 +1,6 @@
 import { Util } from "./util.ts";
 import { DT } from "./datatype.ts";
 import { ClientReader } from "./client-reader.ts";
-import { debug } from "node:console";
 import { ServerStatus } from "@/mc/types.ts";
 
 enum CLIENT_STATE {
@@ -14,7 +13,7 @@ export class Client {
   constructor(
     public readonly version: string,
     public readonly serverAddress: string,
-    public readonly serverPort: number,
+    public readonly serverPort: number = Util.DEFAULT_SERVER_PORT,
   ) {}
 
   #ensureConn(): asserts this is this & { conn: Deno.TcpConn } {
@@ -25,17 +24,13 @@ export class Client {
     }
   }
 
-  async connect(ip: string, port: number = 25565) {
-    debug(`Connecting to server ${ip} with port ${port}.`);
+  async connect() {
     this.conn = await Deno.connect({
-      hostname: ip,
-      port: port,
+      hostname: this.serverAddress,
+      port: this.serverPort,
+      autoSelectFamily: false,
+      signal: AbortSignal.timeout(Util.DEFAULT_SERVER_TIMEOUT),
     });
-  }
-
-  async handshake() {
-    this.#ensureConn();
-    debug(`Handshaking with version ${this.version}.`);
     await this.conn.write(DT.packet([
       DT.varInt(0),
       DT.varInt(Util.minecraftVerToProtocolVer(this.version)),
@@ -47,18 +42,18 @@ export class Client {
 
   async getStatus(): Promise<ServerStatus> {
     this.#ensureConn();
-    debug("Asking for server status.");
     await this.conn.write(DT.packet([
       DT.varInt(0),
     ]));
 
     for await (const packet of this.read()) {
+      this.conn.close();
       return packet;
     }
     throw new Error("Connection closed before status was received");
   }
 
-  async *read(timeoutMs = 2000) {
+  async *read(timeoutMs = Util.DEFAULT_SERVER_TIMEOUT) {
     this.#ensureConn();
     const reader = new ClientReader();
     const buffer = new Uint8Array(4096);
@@ -78,12 +73,10 @@ export class Client {
         .finally(() => timer !== undefined && clearTimeout(timer));
 
       if (bytesRead === null) return;
-      debug("Got new TCP packet.");
       reader.push(buffer.slice(0, bytesRead));
       while (true) {
         const packet = reader.nextPacket();
         if (!packet) break;
-        debug("TCP packet finished.");
         const json = reader.parsePacket(packet);
         yield json;
       }

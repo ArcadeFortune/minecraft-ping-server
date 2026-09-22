@@ -1,11 +1,9 @@
 import { useEffect, useState } from "preact/hooks";
-import { ServerStatus } from "@/mc/types.ts";
 import ServerAdd from "@/islands/server-add.tsx";
 import ServerInfo from "@/islands/server-info.tsx";
 
 function getServersFromLocalStorage() {
   const servers: ServerItem[] = JSON.parse(localStorage.getItem("servers") ?? "[]");
-  console.debug("reading servers", servers);
   return servers;
 }
 
