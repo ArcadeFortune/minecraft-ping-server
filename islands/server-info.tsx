@@ -1,14 +1,15 @@
-import { ServerStatus } from "@/mc/types.ts";
+import { ServerItem } from "@/islands/server-list.tsx";
+import { useEffect } from "preact/hooks";
 
-// {
-//   description: "Chili SMP",
-//   players: { max: 20, online: 0 },
-//   version: { name: "Paper 26.2", protocol: 776 },
-//   enforcesSecureChat: true
-// }
-
-export default function ServerInfo(props: ServerStatus) {
+export default function ServerInfo({ server }: { server: ServerItem }) {
+  useEffect(() => {
+    const params = new URLSearchParams({ address: server.address });
+    fetch("/api/status?" + params.toString());
+  }, []);
   return (
-    "serverinfo island"
+    <div>
+      <h1>Server Info Island</h1>
+      {server.address} | {server.name}
+    </div>
   );
 }

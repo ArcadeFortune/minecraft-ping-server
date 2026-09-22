@@ -57,5 +57,8 @@
     "types": [
       "vite/client"
     ]
+  },
+  "fmt": {
+    "lineWidth": 300
   }
 }
