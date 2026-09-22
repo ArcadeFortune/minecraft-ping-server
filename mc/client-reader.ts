@@ -20,9 +20,9 @@ export class ClientReader {
     const packetEnd = packetStart + advertisedLength.js;
 
     //is part of packet still missing?
-    if (this.#buffer.length < packetEnd)
+    if (this.#buffer.length < packetEnd) {
       return null;
-    else {
+    } else {
       //pop packet from #buffer and return it
       const packet = this.#buffer.slice(packetStart, packetEnd);
       this.#buffer = this.#buffer.slice(packetEnd);
@@ -35,12 +35,10 @@ export class ClientReader {
     const packetId = DT.decodeVarInt(packet, offset);
     if (!packetId) throw new Error("Packet ID is invalid.");
     offset += packetId?.raw.length;
-    // console.log('packetId --->', packetId);
 
     const jsonLength = DT.decodeVarInt(packet, offset);
     if (!jsonLength) throw new Error("JSON length is invalid.");
     offset += jsonLength.raw.length;
-    // console.log('jsonLength --->', jsonLength);
 
     const payload = packet.slice(offset);
     const text = new TextDecoder().decode(payload);

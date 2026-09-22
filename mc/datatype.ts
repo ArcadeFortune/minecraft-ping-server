@@ -1,4 +1,3 @@
-//todo: change spread operators to buf.set() for efficiency
 type Datatype =
   | { type: "varint"; js: number, raw: Uint8Array<ArrayBuffer>; }
   | { type: "ushort"; js: number, raw: Uint8Array<ArrayBuffer>; }
