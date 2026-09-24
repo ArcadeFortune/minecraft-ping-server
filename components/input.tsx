@@ -7,6 +7,7 @@ interface BaseProps {
 
 interface TextInput {
   type: "text";
+  value?: string;
   placeholder?: string;
   autocomplete?: HTMLInputElement["autocomplete"];
 }
@@ -21,6 +22,7 @@ export function UIInput(props: UIInputProps) {
           class="ring-2 px-2 py-1 bg-black text-gray-100 border-gray-300 border-2 focus:outline-2"
           type="text"
           name={props.name}
+          value={props.value}
           autocomplete={props.autocomplete || "on"}
           required={props.required}
           placeholder={props.placeholder}

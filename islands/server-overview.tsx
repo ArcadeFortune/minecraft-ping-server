@@ -11,7 +11,7 @@ function getServersFromLocalStorage() {
 
 export interface ServerInfo {
   address: string;
-  name: string;
+  name?: string;
 }
 
 export default function ServerList() {
@@ -30,16 +30,25 @@ export default function ServerList() {
           <UIServerList>
             {servers.map((s, i) => <ServerItem key={i} idx={i} server={s} selected={selected} setSelected={setSelected} />)}
           </UIServerList>
-          <UIButton onClick={() => setMode("add")}>Add server</UIButton>
+          <div className="flex gap-4">
+            <UIButton onClick={() => setMode("add")}>Add server</UIButton>
+            <UIButton onClick={() => setMode("add")} disabled={selected === null}>Edit</UIButton>
+          </div>
         </>
       )
       : (
         <ServerAdd
           onSubmit={(address, name) => {
-            setServers([...servers, { address, name }]);
+            if (selected) {
+              setServers(servers.map((item, index) => index === selected ? { address, name } : item));
+              setSelected(null);
+            } else {
+              setServers([...servers, { address, name }]);
+            }
             setMode("list");
           }}
           onCancel={() => setMode("list")}
+          selected={selected ? servers[selected] : null}
         />
       )
   );

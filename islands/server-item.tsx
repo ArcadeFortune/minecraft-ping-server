@@ -47,17 +47,17 @@ export default function ServerItem({ idx, server, selected, setSelected }: Serve
         <div class="self-stretch text-start leading-none">
           <UIH3>{server.name || server.address}</UIH3>
           {!loading &&
-            <UIFormattedText text={status?.description ?? "No description."} />}
+            <UIFormattedText text={status?.description ?? "No description"} />}
         </div>
         <div class="ms-auto whitespace-nowrap">
-          {status ? `${status.players.online} / ${status.players.max}` : "?"}
+          {loading ? "Pinging..." : status ? `${status.players.online} / ${status.players.max}` : "No connection"}
         </div>
       </button>
       <div className={`grid transition-[grid-template-rows] duration-200 ease-in-out ${expaned ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}>
         <div className="overflow-hidden">
           <div className="p-4">
             {(status?.players?.sample?.length && status.players.sample.map((p, i) => <div key={i}>{UIFormattedText({ text: p.name })}</div>)) ||
-              "No player Information available."}
+              "No player information available."}
           </div>
         </div>
       </div>

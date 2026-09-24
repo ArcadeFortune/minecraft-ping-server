@@ -12,7 +12,7 @@ export function UIButton(props: UIButtonProps) {
     <button
       type={props.type ?? "button"}
       {...props}
-      class="px-2 py-1 border-gray-500 border-2 rounded-none cursor-pointer select-none min-w-28 bg-gray-300 hover:bg-gray-200 hover:shadow-[1px_1px_0_black] focus:shadow-[1px_1px_0_black] focus:outline-0 active:shadow-[-1px_-1px_0_black] pointer-fine:active:bg-gray-300"
+      class="px-2 py-1 border-gray-500 border-2 rounded-none cursor-pointer select-none min-w-28 bg-gray-300 hover:bg-gray-200 hover:shadow-[1px_1px_0_black] focus:shadow-[1px_1px_0_black] focus:outline-0 active:shadow-[-1px_-1px_0_black] pointer-fine:active:bg-gray-300 disabled:bg-gray-300 disabled:text-gray-700 disabled:opacity-80 disabled:shadow-none"
     />
   );
 }
