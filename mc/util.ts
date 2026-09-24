@@ -9,7 +9,7 @@ export function minecraftVerToProtocolVer(minecraftVer: string) {
 
 export class Util {
   static DEFAULT_SERVER_PORT = 25565;
-  static DEFAULT_SERVER_TIMEOUT = 1000;
+  static DEFAULT_SERVER_TIMEOUT = 2000;
   static DEFAULT_SERVER_ICON = "default-server.png";
   static minecraftVerToProtocolVer(minecraftVer: string) {
     switch (minecraftVer) {

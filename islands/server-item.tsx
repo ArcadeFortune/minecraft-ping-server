@@ -3,7 +3,7 @@ import { Dispatch, StateUpdater, useEffect, useState } from "preact/hooks";
 import { Util } from "@/mc/util.ts";
 import { ServerStatus } from "@/mc/types.ts";
 import UIH3 from "@/components/h3.tsx";
-import UIServerDescription from "@/components/server-description.tsx";
+import UIFormattedText from "@/components/server-description.tsx";
 
 interface ServerItemProps {
   idx: number;
@@ -19,7 +19,7 @@ export default function ServerItem({ idx, server, selected, setSelected }: Serve
 
   useEffect(() => {
     const params = new URLSearchParams({ address: server.address });
-    fetch("/api/status?" + params.toString(), { cache: "no-store" })
+    fetch("/api/status?" + params.toString())
       .then(async (res) => res.ok ? await res.json() : Promise.reject(await res.json()))
       .then((data) => setStatus(data.message))
       .catch((e) => console.error(e.error))
@@ -47,7 +47,7 @@ export default function ServerItem({ idx, server, selected, setSelected }: Serve
         <div class="self-stretch text-start leading-none">
           <UIH3>{server.name || server.address}</UIH3>
           {!loading &&
-            <UIServerDescription text={status?.description ?? "No description."} />}
+            <UIFormattedText text={status?.description ?? "No description."} />}
         </div>
         <div class="ms-auto whitespace-nowrap">
           {status ? `${status.players.online} / ${status.players.max}` : "?"}
@@ -55,8 +55,10 @@ export default function ServerItem({ idx, server, selected, setSelected }: Serve
       </button>
       <div className={`grid transition-[grid-template-rows] duration-200 ease-in-out ${expaned ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}>
         <div className="overflow-hidden">
-          {status?.players?.sample?.map((p, i) => <div key={i}>{p.name}</div>) ??
-            "No player Information available."}
+          <div className="p-4">
+            {(status?.players?.sample?.length && status.players.sample.map((p, i) => <div key={i}>{UIFormattedText({ text: p.name })}</div>)) ||
+              "No player Information available."}
+          </div>
         </div>
       </div>
     </li>

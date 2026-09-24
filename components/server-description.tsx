@@ -91,8 +91,6 @@ function FormatText(text: string) {
   return result;
 }
 
-
-
 interface UIServerDescriptionProps {
   text: ServerStatus["description"];
 }
@@ -130,6 +128,6 @@ function RecurseText({ text }: { text: UIServerDescriptionProps["text"] }) {
   );
 }
 
-export default function UIServerDescription({ text }: UIServerDescriptionProps) {
+export default function UIFormattedText({ text }: UIServerDescriptionProps) {
   return <RecurseText text={text} />;
 }

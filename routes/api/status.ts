@@ -11,9 +11,17 @@ export const handler = define.handlers({
       const client = new Client("26.2", target, port);
       await client.connect();
       const res = await client.getStatus();
-      return respond(res, 200, null);
+      return respond(res, 200, null, {
+        headers: {
+          "Cache-Control": "max-age=1",
+        },
+      });
     } catch (e) {
-      return respond("Server is Unavailable", 503, `${e}`);
+      return respond("Server is Unavailable", 503, `${e}`, {
+        headers: {
+          "Cache-Control": "max-age=5",
+        },
+      });
     }
   },
 });
