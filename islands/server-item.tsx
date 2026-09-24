@@ -29,26 +29,27 @@ export default function ServerItem({ idx, server, selected, setSelected }: Serve
   useEffect(() => {
     setExpanded(idx === selected);
   }, [selected]);
+
   return (
     <li class={`not-last:mb-2 ${idx === selected ? "ring-2" : ""}`}>
       <button
-        class="w-full flex items-center gap-4 cursor-pointer select-none"
+        class="w-full flex items-start gap-4 cursor-pointer select-none"
         type="button"
         onClick={() => {
           setSelected(idx === selected ? null : idx);
         }}
       >
         <img
-          class="size-16"
+          class="size-18"
           src={status?.favicon ?? Util.DEFAULT_SERVER_ICON}
           alt="Server"
         />
-        <div class="self-stretch text-start">
+        <div class="self-stretch text-start leading-none">
           <UIH3>{server.name || server.address}</UIH3>
           {!loading &&
             <UIServerDescription text={status?.description ?? "No description."} />}
         </div>
-        <div class="ms-auto">
+        <div class="ms-auto whitespace-nowrap">
           {status ? `${status.players.online} / ${status.players.max}` : "?"}
         </div>
       </button>

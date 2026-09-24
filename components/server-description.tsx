@@ -1,15 +1,107 @@
 import { ServerStatus } from "@/mc/types.ts";
+import { ComponentChild } from "preact";
+
+function FormatText(text: string) {
+  const result: ComponentChild[] = [];
+  let style: Record<string, unknown> = {};
+  let buffer = "";
+  function flush() {
+    result.push(RecurseText({ text: { text: buffer, ...style } }));
+    buffer = "";
+  }
+  for (let i = 0; i < text.length; i++) {
+    if (text[i] === "\n") {
+      flush();
+      result.push(<br />);
+      continue;
+    }
+    if (text[i] !== "§" || i + 1 >= text.length) {
+      buffer += text[i];
+      continue;
+    }
+    flush();
+    const code = text[++i].toLowerCase();
+    switch (code) {
+      case "0":
+        style.color = "black";
+        break;
+      case "1":
+        style.color = "text-blue-900";
+        break;
+      case "2":
+        style.color = "dark_blue";
+        break;
+      case "3":
+        style.color = "dark_aqua";
+        break;
+      case "4":
+        style.color = "dark_red";
+        break;
+      case "5":
+        style.color = "dark_purple";
+        break;
+      case "6":
+        style.color = "gold";
+        break;
+      case "7":
+        style.color = "gray";
+        break;
+      case "8":
+        style.color = "dark_gray";
+        break;
+      case "9":
+        style.color = "blue";
+        break;
+      case "a":
+        style.color = "green";
+        break;
+      case "b":
+        style.color = "aqau";
+        break;
+      case "c":
+        style.color = "red";
+        break;
+      case "d":
+        style.color = "purple";
+        break;
+      case "e":
+        style.color = "yellow";
+        break;
+      case "f":
+        style.color = "white";
+        break;
+      case "l":
+        style.bold = true;
+        break;
+      case "o":
+        style.italic = true;
+        break;
+      case "n":
+        style.underline = true;
+        break;
+      case "m":
+        style.strikethrough = true;
+        break;
+      case "r":
+        style = {};
+        break;
+    }
+  }
+  flush();
+  return result;
+}
+
+
 
 interface UIServerDescriptionProps {
   text: ServerStatus["description"];
 }
 
 function RecurseText({ text }: { text: UIServerDescriptionProps["text"] }) {
-  if (typeof text === "string") return text;
+  if (typeof text === "string") return FormatText(text);
   return (
     <span
       class={`
-        whitespace-pre-wrap
         ${text.bold ? "font-bold" : ""}
         ${text.italic ? "font-italic" : ""}
         ${text.underlined ? "underline" : ""}
@@ -32,12 +124,12 @@ function RecurseText({ text }: { text: UIServerDescriptionProps["text"] }) {
         ${text.color === "white" ? "text-white" : ""}
       `}
     >
+      {text.text}
       {text.extra?.map((t, i) => <RecurseText key={i} text={t} />)}
     </span>
   );
 }
 
 export default function UIServerDescription({ text }: UIServerDescriptionProps) {
-  return "rendering server desc WIP";
-  <RecurseText text={text} />;
-  }
+  return <RecurseText text={text} />;
+}
