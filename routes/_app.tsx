@@ -12,7 +12,7 @@ export default define.page(function App({ Component }) {
           content="Ping Minecraft servers and see online players without opening Minecraft."
         />
       </head>
-      <body>
+      <body class="font-display">
         <Component />
       </body>
     </html>

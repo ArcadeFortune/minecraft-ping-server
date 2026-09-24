@@ -1,8 +1,10 @@
 type ServerStatusDescription = string | {
   text: string;
-  extra: ServerStatusDescription[];
+  extra?: ServerStatusDescription[];
   color?: string;
   bold?: boolean;
+  italic?: boolean;
+  underlined?: boolean;
   obfuscated?: boolean;
   strikethrough?: boolean;
 };

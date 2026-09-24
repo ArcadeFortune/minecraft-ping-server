@@ -1,10 +1,12 @@
-import ServerList from "@/islands/server-list.tsx";
+import ServerList from "@/islands/server-overview.tsx";
 import { define } from "../utils.ts";
+import UIH1 from "@/components/h1.tsx";
+import UIContainer from "@/components/container.tsx";
 export default define.page(function Home() {
   return (
-    <>
-      <h1>Servers</h1>
+    <UIContainer>
+      <UIH1>Server List</UIH1>
       <ServerList />
-    </>
+    </UIContainer>
   );
 });
